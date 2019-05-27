@@ -58,14 +58,17 @@
 @foreach($lienquans as $lienquan)
 <div class="sa-lpcol">
 	<div class="sa-lpi">
+        @if($lienquan->giamgia != 0)
 	    <img src="/lienquan_temp/images/price-percent-br-2.png" class="promotion_label" />
 		<span class="text_promotion">
 			<b>-{{$lienquan->giamgia}}%</b>
 		</span>
+        @endif
 		<a class="sa-lpimglq" href="/lien-quan/acc-{{$lienquan->id}}.html">
 			<div class="sa-lpcode">
 			    <img src="/lienquan_temp/images/star-green.png" class="vip-icon" />			    
-			    Acc #{{$lienquan->id}}	 - Dư 5 Đá Quý			
+			    Acc #{{$lienquan->id}}	 - 
+                @if($lienquan->title != ''){{$lienquan->title}} @else {{'Shop Liên Quân'}} @endif
 			</div>
 			<div class="sa-lpping">
                 @foreach($lienquan->images as $key => $image)

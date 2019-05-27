@@ -47,14 +47,15 @@
                             
                     </ul>
   
-
+@if($lienquan->description != '')
     <div class="alert alert-warning" role="alert">
 		<div class="row text-center">
 			<div class="col-xs-12 col-md-12">
-    			Acc dư 5 viên đá quý, full tướng gần full skin cực vip nhé anh em.    		</div>
+    			{{$lienquan->description}}  		
+    		</div>
 		</div>
 	</div>
-
+@endif
 
                                                     
 <ul class="show_info">                                                                    

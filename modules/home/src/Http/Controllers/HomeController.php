@@ -188,7 +188,7 @@ class HomeController extends Controller
                 $rank_max = 28;
                 break;
             default: //all
-                $rank_min = 2;
+                $rank_min = 0;
                 $rank_max = 28;
                 break;
             break;
@@ -235,12 +235,25 @@ class HomeController extends Controller
         }
        
 
-        $lienquans =  Lienquan::join('lienquanranks','lienquans.rank_id', '=', 'lienquanranks.id')
-        ->select('lienquans.*', 'lienquanranks.name as rank_name')
-        ->whereBetween('rank_id',[$rank_min,$rank_max])
+        // $lienquans =  Lienquan::join('lienquanranks','lienquans.rank_id', '=', 'lienquanranks.id')
+        // ->select('lienquans.*', 'lienquanranks.name as rank_name')
+        // ->whereBetween('rank_id',[$rank_min,$rank_max])
+        // ->whereBetween(DB::raw('gia - gia*giamgia/100'),[$price_min,$price_max])
+        // ->orderBy('lienquans.id', 'desc')
+        // ->paginate(16);
+
+
+        $lienquans = Lienquan::whereBetween('rank_id',[$rank_min,$rank_max])
         ->whereBetween(DB::raw('gia - gia*giamgia/100'),[$price_min,$price_max])
         ->orderBy('lienquans.id', 'desc')
         ->paginate(16);
+        foreach ($lienquans as $lienquan) {
+            $lienquan->rank = Lienquan::join('lienquanranks','lienquans.rank_id', '=', 'lienquanranks.id')
+            ->select('lienquanranks.name as rank_name')->where('lienquans.id', $lienquan->id)->first();
+
+            $lienquan->images = Lienquan::join('lienquan_images', 'lienquans.id', '=', "lienquan_images.lienquan_id")
+            ->select('lienquan_images.image as lienquan_image')->where('lienquans.id', $lienquan->id)->get();
+        }
 
      
         return view('lienquan::frontend.filter',['lienquans'=>$lienquans]);
