@@ -58,8 +58,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script>
 	<script>
 		Dropzone.options.myDropzone = {
-		    maxFileSize : 4,
-		    parallelUploads : 10,
+		    maxFileSize : 8,
+		    parallelUploads : 40,
 		    uploadMultiple: true,
 		    autoProcessQueue : false,
 		    addRemoveLinks : true,
