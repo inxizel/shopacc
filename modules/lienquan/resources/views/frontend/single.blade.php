@@ -58,21 +58,12 @@
 
                                                     
 <ul class="show_info">                                                                    
-                                                                    <li>
-                                        <img src="/lienquan_temp/images/crop/20308858271232501_5321_1.jpg?65fff" alt="img champ">
+                                @foreach($lienquan->images as $key => $image)
+                 
+                                    <li>
+                                        <img src="/storage/{{$image->lienquan_image}}" alt="img champ">
                                     </li>
-                                                                    <li>
-                                        <img src="/lienquan_temp/images/crop/20308858271232501_5321_2.jpg?65fff" alt="img champ">
-                                    </li>
-                                                                    <li>
-                                        <img src="/lienquan_temp/images/crop/20308858271232501_5321_3.jpg?65fff" alt="img champ">
-                                    </li>
-                                                                    <li>
-                                        <img src="/lienquan_temp/images/crop/20308858271232501_5321_4.jpg?65fff" alt="img champ">
-                                    </li>
-                                                                    <li>
-                                        <img src="/lienquan_temp/images/crop/20308858271232501_5321_5.jpg?65fff" alt="img champ">
-                                    </li>
+                                @endforeach                    
                                          
                                 			  					
 </ul>

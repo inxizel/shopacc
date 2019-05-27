@@ -247,10 +247,25 @@ class HomeController extends Controller
     }
     public function home()
     {
-        $lienquans =  Lienquan::join('lienquanranks','lienquans.rank_id', '=', 'lienquanranks.id')
-        ->select('lienquans.*', 'lienquanranks.name as rank_name')
-        ->orderBy('lienquans.id', 'desc')
+        // $lienquans =  Lienquan::join('lienquanranks','lienquans.rank_id', '=', 'lienquanranks.id')
+        // ->join('lienquan_images','lienquans.id', '=', 'lienquan_images.lienquan_id')
+        // ->select('lienquans.*', 'lienquanranks.name as rank_name')
+        // ->orderBy('lienquans.id', 'desc')
+        // ->paginate(4);
+
+
+        $lienquans = Lienquan::orderBy('lienquans.id', 'desc')
         ->paginate(4);
+        foreach ($lienquans as $lienquan) {
+            $lienquan->rank = Lienquan::join('lienquanranks','lienquans.rank_id', '=', 'lienquanranks.id')
+            ->select('lienquanranks.name as rank_name')->where('lienquans.id', $lienquan->id)->first();
+
+            $lienquan->images = Lienquan::join('lienquan_images', 'lienquans.id', '=', "lienquan_images.lienquan_id")
+            ->select('lienquan_images.image as lienquan_image')->where('lienquans.id', $lienquan->id)->get();
+        }
+
+        //dd($lienquans);
+
 
         return view('lienquan::frontend.index',['lienquans'=>$lienquans]);
     }
@@ -258,6 +273,11 @@ class HomeController extends Controller
         $lienquan = LienQuan::join('lienquanranks','lienquans.rank_id', '=', 'lienquanranks.id')
         ->select('lienquans.*', 'lienquanranks.name as rank_name')
         ->find($id);
+
+        $lienquan->images = Lienquan::join('lienquan_images', 'lienquans.id', '=', "lienquan_images.lienquan_id")
+        ->select('lienquan_images.image as lienquan_image')->where('lienquans.id', $id)->get();
+
+        //dd($lienquan);
         //->get();
         //dd($lienquan);
         return view('lienquan::frontend.single',['lienquan'=>$lienquan]);

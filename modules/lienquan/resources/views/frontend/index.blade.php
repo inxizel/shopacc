@@ -68,7 +68,11 @@
 			    Acc #{{$lienquan->id}}	 - Dư 5 Đá Quý			
 			</div>
 			<div class="sa-lpping">
-				<img src="/lienquan_temp/images/crop/20308858271232501_5321_1.jpg?65fff" alt="mua acc646" />
+                @foreach($lienquan->images as $key => $image)
+                    @if($key == 0)
+				    <img src="/storage/{{$image->lienquan_image}}" alt="thumb" />
+                    @endif
+                @endforeach
 			</div>
 		</a>
 		<div class="sa-lpbott clearfix">
@@ -97,7 +101,7 @@
 			<div class="clearfix"></div>
 			<div class="sa-rank">
 				<p class="sa-lpbpice">
-					{{$lienquan->rank_name}}	
+					{{$lienquan->rank->rank_name}}	
 				</p>
 			</div>
 			<div class="sa-info">
