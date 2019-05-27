@@ -1,0 +1,8 @@
+{
+    "name": "Member",
+    "namespace": "Zent\\Member\\",
+    "provider": "Zent\\Member\\Providers\\MemberServiceProvider",
+    "author": "ThanhTung",
+    "version": "1.0",
+    "description": "The description for module member"
+}
