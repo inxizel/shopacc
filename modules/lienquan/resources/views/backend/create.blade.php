@@ -37,7 +37,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label>Season</label>
-                <input class="form-control" placeholder="Rank mùa mấy" id="season" name="season" type="text" value="8"/>
+                <input class="form-control" placeholder="Rank mùa mấy" id="season" name="season" type="text" value="9"/>
             </div>
         </div>
         
@@ -115,17 +115,19 @@
                 <input class="form-control" placeholder="Số vàng còn lại" id="ip" name="ip" type="text" value=""/>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
             <div class="form-group">
-                <label>Ảnh đại diện</label>
-                <input class="form-control" placeholder="Thumbnail?" id="thumb" name="thumb" type="text" value="1"/>
+                <label>Title</label>
+                <input class="form-control" placeholder="Title?" id="season" name="title" type="text">
             </div>
         </div>
-        
-        <div class="col-md-3">
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
             <div class="form-group">
-                <label>Số hình ảnh</label>
-                <input class="form-control" placeholder="Số hình ảnh" id="count_img" name="count_img" type="text" value="1"/>
+                <label>Description</label>
+                <input class="form-control" placeholder="Description?" id="description" name="description" type="text">
             </div>
         </div>
     </div>

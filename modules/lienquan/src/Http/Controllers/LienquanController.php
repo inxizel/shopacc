@@ -100,6 +100,7 @@ class LienquanController extends Controller
             
             $data = array();
             parse_str($request->data, $data);
+            //dd($data);
 
             $lienquan['loainick'] = 'LienQuan';
             $lienquan['rank_id'] = $data['rank'];
@@ -115,6 +116,8 @@ class LienquanController extends Controller
             $lienquan['ip'] = $data['ip'];
             $lienquan['champs'] = $data['champs'];
             $lienquan['skins'] = $data['skins'];
+            $lienquan['title'] = $data['title'];
+            $lienquan['description'] = $data['description'];
             
             if(isset($data['thongtin']) &&  $data['thongtin'] == 'on') $lienquan['thongtin'] = 1; else $lienquan['thongtin'] = 0;
         

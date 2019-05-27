@@ -255,7 +255,7 @@ class HomeController extends Controller
 
 
         $lienquans = Lienquan::orderBy('lienquans.id', 'desc')
-        ->paginate(4);
+        ->paginate(16);
         foreach ($lienquans as $lienquan) {
             $lienquan->rank = Lienquan::join('lienquanranks','lienquans.rank_id', '=', 'lienquanranks.id')
             ->select('lienquanranks.name as rank_name')->where('lienquans.id', $lienquan->id)->first();

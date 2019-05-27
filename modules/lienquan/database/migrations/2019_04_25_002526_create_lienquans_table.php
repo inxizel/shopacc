@@ -34,11 +34,10 @@ class CreateLienquansTable extends Migration
             $table->integer('count_skins');
             $table->integer('count_bangngoc');
             $table->integer('diemngoc');
-            $table->integer('thumb_id')->nullable();
-            $table->integer('image_id')->nullable();
+            $table->integer('thumb')->nullable();
+            $table->string('title')->nullable();
+            $table->string('description')->nullable();
             $table->integer('user_id');
-
-            $table->tinyInteger('status')->default(1)->comment('0: hide, 1: show');
             $table->timestamps();
             $table->softDeletes();
         });

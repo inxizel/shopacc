@@ -37,8 +37,9 @@ class Lienquan extends Model
         'trangthai', 
         'kichhoat',
         'uutien',  
-        'thumb_id', 
-        'image_id', 
+        'thumb', 
+        'title',
+        'description', 
         'user_id',
         'status'
     ];
