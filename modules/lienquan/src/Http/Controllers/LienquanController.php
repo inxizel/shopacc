@@ -36,14 +36,14 @@ class LienquanController extends Controller
         
 
 
-        $validator = Validator::make($request->all(), [
-            'file'  => 'required|max:1',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'file'  => 'required|max:1',
+        // ]);
 
-        if ($validator->fails()) {
-            $abc =  $validator->errors()->getMessages();
-            dd($abc);
-        }
+        // if ($validator->fails()) {
+        //     $abc =  $validator->errors()->getMessages();
+        //     dd($abc);
+        // }
 
         $images = $request->file('file');
         $lienquan_id = $request->lienquan_id;
