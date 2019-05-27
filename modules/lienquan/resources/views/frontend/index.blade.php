@@ -81,9 +81,11 @@
 		<div class="sa-lpbott clearfix">
 			<div class="sa-rate">
 				<p class="sa-cash">
+                    @if($lienquan->giamgia != 0)
 				    <span class="price_promotion">
 				    	{{number_format($lienquan->gia)}}<sup>đ</sup>
 				    </span>
+                    @endif
 					{{number_format($lienquan->gia - $lienquan->gia*$lienquan->giamgia/100)}}<sup>đ</sup>				
 				</p>
 			</div>
