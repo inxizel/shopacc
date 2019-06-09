@@ -32,7 +32,7 @@
                         <option value="">Chọn loại thẻ</option>
                                     <option value="1">Viettel - nhanh</option>
                                     <option value="2">Mobiphone - chậm</option>
-                                    <option value="4">Vinaphone - chậm</option>
+                                    <option value="3">Vinaphone - chậm</option>
                                     <!--<option value="6">Vietnammobile</option>-->
                                     <!--<option value="9">Megacard</option>-->
                                     <!--<option value="4">FPT Gate</option>-->
@@ -99,19 +99,47 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <td>STT</td>
                                     <td>TRẠNG THÁI</td>
                                     <td>MÃ THẺ</td>
                                     <td>SERIAL</td>
+                                    <td>LOẠI THẺ</td>
                                     <td>MỆNH GIÁ</td>
                                     <td>NGÀY NẠP</td>
 
                                 </tr>
                             </thead>
                             <tbody>
-<tr><td colspan="6" class="text-center"><p>Bạn Chưa Có Cuộc Giao Dịch Nào</p></td></tr>
+                                @foreach($napthes as $napthe)
+                                    <tr>
+                                        @if($napthe['trangthai'] == 0)
+                                        <td class="napthe-warning">
+                                            {{$napthe['trangthai_string']}}
+                                        </td>
+                                        @elseif($napthe['trangthai'] == 1)
+                                        <td class="napthe-success">
+                                            {{$napthe['trangthai_string']}}
+                                        </td>
+                                        @elseif($napthe['trangthai'] == 2)
+                                        <td class="napthe-danger">
+                                            {{$napthe['trangthai_string']}}
+                                        </td>
+                                        @elseif($napthe['trangthai'] == 3)
+                                        <td class="napthe-refuse">
+                                            {{$napthe['trangthai_string']}}
+                                        </td>
+                                        @endif
 
-                           </tbody>
+
+
+
+                                        <td>{{$napthe['mathe']}}</td>
+                                        <td>{{$napthe['serial']}}</td>
+                                        <td>{{$napthe['loaithe_string']}}</td>
+                                        <td>{{number_format($napthe['menhgia'])}} vnd</td>
+                                        <td>{{$napthe['created_at']}}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -123,4 +151,24 @@
 
 
   
+@endsection
+@section('style')
+<style type="text/css">
+    .napthe-warning{
+        color: #fff!important;
+        background-color: #FBC02D!important;
+    }
+    .napthe-success{
+        color: #fff!important;
+        background-color: #4caf50!important;
+    }
+    .napthe-danger{
+        color: #fff!important;
+        background-color: #f44336!important;
+    }
+    .napthe-refuse{
+        color: #fff!important;
+        background-color: #969c9c!important;
+    }
+</style>
 @endsection

@@ -13,8 +13,15 @@ use View;
 use Zent\Lienquan\Models\Lienquan;
 use Zent\Member\Models\Member;
 
+use App\LienquanLichsumua;
+use App\LienquanNapthe;
+
 use GuzzleHttp\Client;
+
+
 use Validator;
+use Illuminate\Validation\Rule;
+
 
 class HomeController extends Controller
 {
@@ -40,18 +47,102 @@ class HomeController extends Controller
     }
 
     public function charing(Request $request){
+        $msg_spam = 'Opp! No spam.';
+        $msg_user = 'Vui lòng kiểm tra kĩ seri và mã thẻ.';
+
         $validator = Validator::make($request->all(), [
-            'card_type_id' => 'required',
-            'amount' => 'required'
-            // ,
-            // 'seri' => 'required|numeric|digits_between:11,15',
-            // 'pin' => 'required|numeric|digits_between:12,15|unique:thecaos'
+            'card_type_id' => ['required',
+                Rule::in(['1', '2', '3'])
+            ],
+            'amount' => ['required',
+                Rule::in(['10000', '20000', '30000', '50000', '100000', '200000', '30000', '50000', '100000'])
+            ],
+            'seri' => 'bail|required|regex:/^[0-9]+$/',
+            'pin' => 'bail|required|regex:/^[0-9]+$/|unique:lienquan_napthes,mathe'
+        ],[
+            'card_type_id.required' => 'Vui lòng chọn loại thẻ.',
+            'card_type_id.in' => $msg_spam,
+            'amount.required' => 'Vui lòng chọn mệnh giá.',
+            'amount.in' => $msg_spam,
+            //
+            'seri.required' => $msg_user,
+            'seri.numeric' => $msg_user,
+            'seri.regex' => 'Seri chỉ bao gồm số.',
+            //
+            'pin.required' => $msg_user,
+            'pin.numeric' => $msg_user,
+            'pin.regex' => 'Mã thẻ chỉ bao gồm số.',
+            'pin.unique' => 'Mã thẻ đã tồn tại.',
         ]);
 
         if ($validator->fails()) {
-            return json_encode(array('err' => true, 'msg' => 'Thẻ bạn nhập không đúng, kiểm tra lại.'));
+            $errors = $validator->errors();
+
+            if ($errors->has('card_type_id')) {
+                return json_encode(array('err' => true, 'msg' => $errors->first('card_type_id') ));
+            }
+            if ($errors->has('amount')) {
+                return json_encode(array('err' => true, 'msg' => $errors->first('amount') ));
+            }
+            if ($errors->has('seri')) {
+                return json_encode(array('err' => true, 'msg' => $errors->first('seri') ));
+            }
+            if ($errors->has('pin')) {
+                return json_encode(array('err' => true, 'msg' => $errors->first('pin') ));
+            }
         }
-        return 1;
+        $loaithe = $request->card_type_id;
+        $seri = $request->seri;
+        $pin = $request->pin;
+        $menhgia = $request->amount;
+
+        switch ($loaithe) {
+            case '1':
+                if(strlen($pin) == 13 && strlen($seri) == 11){
+                    break;
+                }elseif (strlen($pin) == 15 && strlen($seri) == 14) {
+                    break;
+                }else{
+                    return json_encode(array('err' => true, 'msg' => $msg_user ));
+                }
+                break;
+            case '2':
+                if(strlen($pin) == 12 && strlen($seri) == 15){
+                    break;
+                }else{
+                    return json_encode(array('err' => true, 'msg' => $msg_user ));
+                }
+                break;
+            case '3':
+                if(strlen($pin) == 12 && strlen($seri) == 14){
+                    break;
+                }elseif (strlen($pin) == 14 && strlen($seri) == 14) {
+                    break;
+                }else{
+                    return json_encode(array('err' => true, 'msg' => $msg_user ));
+                }
+                break;
+            default:
+                return json_encode(array('err' => true, 'msg' => $msg_spam ));
+        }
+
+        $uid = Cookie::get('uid');
+        $member = Member::where('uid',$uid)->first();
+        try {
+            LienquanNapthe::create([
+                'uid' => $member['uid'],
+                'loaithe' => $loaithe,
+                'serial' => $seri,
+                'menhgia' => $menhgia,
+                'mathe' => $pin
+            ]);
+        }catch (\Exception $e) {
+            return response()->json(['err' => true, 'msg' => $e->getMessage()]);
+        }
+
+        return json_encode(array('err' => true, 'msg' => 'Done!' ));
+
+
 
         // $serial = $TxtSeri;
         // $mathe = $TxtMaThe;
@@ -133,9 +224,38 @@ class HomeController extends Controller
             if(1){ //$resJson->status == 0
                 $arr = array('error' => false, 'message' => 'Bấm xác nhận để xem tài khoản + mật khẩu!'); 
                 # Thêm vào lịch sử mua
+                try {
+                    LienquanLichsumua::create([
+                        'uid' => $member['uid'],
+                        'loainick' => $lienquan['loainick'],
+                        'idacc' => $lienquan['id'],
+                        'taikhoan' => $lienquan['taikhoan'],
+                        'matkhau' => $lienquan['matkhau'],
+                        'gia' => $lienquan['gia']
+
+                    ]);
+                }catch (\Exception $e) {
+                    return response()->json(['err' => true, 'msg' => $e->getMessage()]);
+                }
                     
-                # Thay đổi trạng thái và trừ tiền
-                
+                # Thay đổi trạng thái acc
+                try {
+                    Lienquan::find($lienquan['id'])->update([
+                        'trangthai' => 'off'
+                    ]);
+                }catch (\Exception $e) {
+                    return response()->json(['err' => true, 'msg' => $e->getMessage()]);
+                }
+                # Trừ tiền
+                try {
+                    Member::where('uid',$member['uid'])->first()->update([
+                        'cash_lienquan' => $member['cash_lienquan'] - $lienquan['giathuc']
+                    ]);
+                }catch (\Exception $e) {
+                    return response()->json(['err' => true, 'msg' => $e->getMessage()]);
+                }
+
+
             }elseif($resJson->status == 1){
                 $arr = array('error' => true, 'isLoginFalse' => true, 'message' => 'Tài khoản đã bị đổi mật khẩu, vui lòng mua acc khác.');
                 // disable account   
@@ -152,7 +272,6 @@ class HomeController extends Controller
     {
 
         $rank = $request->rank;
-
         $price = !empty($request->price) ? addslashes($request->price) : ""; // theo tien
         $order = !empty($request->order) ? addslashes($request->order) : 0; // tuong nhieu nhat
 
@@ -241,12 +360,27 @@ class HomeController extends Controller
         // ->whereBetween(DB::raw('gia - gia*giamgia/100'),[$price_min,$price_max])
         // ->orderBy('lienquans.id', 'desc')
         // ->paginate(16);
+        if ($order == 1) { //tuong nhieu nhat
+            $lienquans = Lienquan::where('trangthai','=','on')
+            ->whereBetween('rank_id',[$rank_min,$rank_max])
+            ->whereBetween(DB::raw('gia - gia*giamgia/100'),[$price_min,$price_max])
+            ->orderBy('lienquans.count_champs', 'desc')
+            ->paginate(16);
+        }elseif ($order == 2) { // dat tien nhat
+            $lienquans = Lienquan::where('trangthai','=','on')
+            ->whereBetween('rank_id',[$rank_min,$rank_max])
+            ->whereBetween(DB::raw('gia - gia*giamgia/100'),[$price_min,$price_max])
+            ->orderBy('lienquans.gia', 'desc')
+            ->paginate(16);
+        }else{ //default orderby id
+            $lienquans = Lienquan::where('trangthai','=','on')
+            ->whereBetween('rank_id',[$rank_min,$rank_max])
+            ->whereBetween(DB::raw('gia - gia*giamgia/100'),[$price_min,$price_max])
+            ->orderBy('lienquans.id', 'desc')
+            ->paginate(16);
+        }
 
-
-        $lienquans = Lienquan::whereBetween('rank_id',[$rank_min,$rank_max])
-        ->whereBetween(DB::raw('gia - gia*giamgia/100'),[$price_min,$price_max])
-        ->orderBy('lienquans.id', 'desc')
-        ->paginate(16);
+        
         foreach ($lienquans as $lienquan) {
             $lienquan->rank = Lienquan::join('lienquanranks','lienquans.rank_id', '=', 'lienquanranks.id')
             ->select('lienquanranks.name as rank_name')->where('lienquans.id', $lienquan->id)->first();
@@ -267,8 +401,10 @@ class HomeController extends Controller
         // ->paginate(4);
 
 
-        $lienquans = Lienquan::orderBy('lienquans.id', 'desc')
+        $lienquans = Lienquan::where('trangthai', '=', 'on')
+        ->orderBy('lienquans.id', 'desc')
         ->paginate(16);
+
         foreach ($lienquans as $lienquan) {
             $lienquan->rank = Lienquan::join('lienquanranks','lienquans.rank_id', '=', 'lienquanranks.id')
             ->select('lienquanranks.name as rank_name')->where('lienquans.id', $lienquan->id)->first();
@@ -296,13 +432,58 @@ class HomeController extends Controller
         return view('lienquan::frontend.single',['lienquan'=>$lienquan]);
     }
     public function naptien(){
-        return view('lienquan::frontend.naptien');
+        $uid = Cookie::get('uid');
+        $member = Member::where('uid',$uid)->first();
+
+        $napthes = LienquanNapthe::where('uid', $member['uid'])->orderBy('id', 'desc')->get();
+        foreach ($napthes as $key => $napthe) {
+            switch ($napthe['trangthai']) {
+                case '0':
+                    $napthes[$key]['trangthai_string'] = 'Chờ duyệt';
+                    break;
+                case '1':
+                    $napthes[$key]['trangthai_string'] = 'Thành công';
+                    break;
+                case '2':
+                    $napthes[$key]['trangthai_string'] = 'Thẻ sai';
+                    break;
+                case '3':
+                    $napthes[$key]['trangthai_string'] = 'Từ chối! ';
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+            switch ($napthe['loaithe']) {
+                case '1':
+                    $napthes[$key]['loaithe_string'] = 'Viettel';
+                    break;
+                case '2':
+                    $napthes[$key]['loaithe_string'] = 'Mobi';
+                    break;
+                case '3':
+                    $napthes[$key]['loaithe_string'] = 'Vina';
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+        }
+
+        //dd($napthes);
+        return view('lienquan::frontend.naptien',['napthes'=>$napthes]);
     }
     public function huongdanmua(){
         return view('lienquan::frontend.huongdanmua');
     }
     public function lichsumua(){
-        return view('lienquan::frontend.lichsumua');
+        $uid = Cookie::get('uid');
+        $member = Member::where('uid',$uid)->first();
+
+        $lichsumuas = LienquanLichsumua::where('uid', $member['uid'])->orderBy('id', 'desc')->get();
+        return view('lienquan::frontend.lichsumua',['lichsumuas'=>$lichsumuas]);
     }
     public function dieukhoan(){
         return view('lienquan::frontend.dieukhoan');

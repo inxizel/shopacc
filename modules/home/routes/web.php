@@ -14,8 +14,8 @@ Route::group(['namespace' => 'Zent\Home\Http\Controllers', 'middleware' => ['loc
     Route::get('/bkaver', 'HomeController@bkaver');
 
     Route::get('lien-quan.html', 'HomeController@home')->name('lienquan.home');
+    
     Route::get('lien-quan/acc-{id}.html', 'HomeController@single')->name('lienquan.single');
-
 
     Route::get('lien-quan/nap-tien.html', 'HomeController@naptien')->name('lienquan.naptien');
 

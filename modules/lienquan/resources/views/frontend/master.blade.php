@@ -26,6 +26,10 @@
     
     <script src="/lienquan_temp/js/functions.js?65fff"></script>
 
+
+
+    @yield('style')
+
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-99024459-3"></script>
     <script>

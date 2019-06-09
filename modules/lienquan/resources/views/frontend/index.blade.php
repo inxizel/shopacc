@@ -37,10 +37,7 @@
             </button>
             <ul class="dropdown-menu select">
                 <li onclick="order=1;"><a href="javascript:;" class="acfiit">Tướng nhiều nhất</a></li>
-                <li onclick="order=2;"><a href="javascript:;" class="acfiit">Trang phục nhiều nhất</a></li>
-                <li onclick="order=3;"><a href="javascript:;" class="acfiit">Giá cao nhất</a></li>
-                <li onclick="order=4;"><a href="javascript:;" class="acfiit">Rank vip nhất</a></li>
-                <li onclick="order=5;"><a href="javascript:;" class="acfiit">Acc mới đăng</a></li>
+                <li onclick="order=2;"><a href="javascript:;" class="acfiit">Giá cao nhất</a></li>
                 
             </ul>
         </div>
